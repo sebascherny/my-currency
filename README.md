@@ -32,17 +32,17 @@ should have all (at least 6) tests successful.
 One test will take some seconds because it tests the cache storage.
 
 API Endpoints:
-* /v1/rates-for-time-period/
- ** Params: 
-  *** source_currency: 3-letter code like EUR or USD
-  *** date_from: Day string with format yyyy-mm-dd. Default is 1900-01-01 (to show all historic data)
-  *** date_to: Same format as date_from. Default is the day of the request.
-  *** provider: String with the provider name. If it exists in the database, it is the first one that will be tried.
- * Response: Json with keys:
-  * success: True
-  * rates: Dictionary where the keys are the days in the time period, and their values are also dictionaries with currency codes as keys, rates as values.
-  * Examples: {"success": True, "rates": {"2020-01-01": {"USD": 1.1}, "2020-01-02": {"USD": 1.12}}}
-* /v1/calculate-exchange/
+- /v1/rates-for-time-period/
+    - Params: 
+        - source_currency: 3-letter code like EUR or USD
+        - date_from: Day string with format yyyy-mm-dd. Default is 1900-01-01 (to show all historic data)
+        - date_to: Same format as date_from. Default is the day of the request.
+        - provider: String with the provider name. If it exists in the database, it is the first one that will be tried.
+    - Response: Json with keys:
+        - success: True
+        - rates: Dictionary where the keys are the days in the time period, and their values are also dictionaries with currency codes as keys, rates as values.
+        - Examples: {"success": True, "rates": {"2020-01-01": {"USD": 1.1}, "2020-01-02": {"USD": 1.12}}}
+- /v1/calculate-exchange/
         * Params: 
             * source_currency: 3-letter code like EUR or USD
             * exchanged_currency: 3-letter code like EUR or USD
