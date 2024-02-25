@@ -74,7 +74,7 @@ API Endpoints:
 
 
 
-Back office (Frontends):
+### Back office (Frontends)
 - /history-graph/ (Graph View)
     - Simple frontend where user can select currency_from, currency_to, input an amount.
     - After button is clicked, a graph is displayed with the converted amount for all the historic available dates.
@@ -84,10 +84,11 @@ Back office (Frontends):
     - Simple frontend to select currency_from and multiple currency_to (for selecting multiple use Ctrl or Command in Mac), and get a table with the current (latest) rates for the selected "currencies_to".
 
 
-- Provider interface:
-    - Priority: The providers are sorted thsi way: If a provider is given as parameter, it's the first one that's going to be tries. After that, the "StoredDataProvider" is the one that's going to be used; it basically takes the information from the database, since a requirement mentioned that if data is in the database, it should be used, and if not, then try different providers. After these possibly two providers, the other ones that are in the database (either with urls or a hardcoded json) are sorted by the is_default boolean, and then by priority (greater to lower).
-    - Pluggable: The code assumes that the url endpoints work in a similar way as Fixer. So (to avoid code injection), the way it currently works is that a Provider instance can have two endpoints (for historic data and for latest rates), and can also have a hardcoded historic json.
-    - Resiliency: As mentioned above, if a Provider does not have information, we use the next one according to is_default and priority.
+### Provider interface
+
+- Priority: The providers are sorted thsi way: If a provider is given as parameter, it's the first one that's going to be tries. After that, the "StoredDataProvider" is the one that's going to be used; it basically takes the information from the database, since a requirement mentioned that if data is in the database, it should be used, and if not, then try different providers. After these possibly two providers, the other ones that are in the database (either with urls or a hardcoded json) are sorted by the is_default boolean, and then by priority (greater to lower).
+- Pluggable: The code assumes that the url endpoints work in a similar way as Fixer. So (to avoid code injection), the way it currently works is that a Provider instance can have two endpoints (for historic data and for latest rates), and can also have a hardcoded historic json.
+- Resiliency: As mentioned above, if a Provider does not have information, we use the next one according to is_default and priority.
 
 
 ### Mocked data (command in management)
