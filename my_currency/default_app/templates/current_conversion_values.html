@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Currency conversion</title>
+</head>
+
+<body>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <label>Currency from</label>
+    <select id="currency_from">
+        {% for currency in currencies %}
+        <option value="{{ currency }}">{{ currency }}</option>
+        {% endfor %}
+    </select>
+    <label>Currency to</label>
+    <select multiple="true" id="currency_to">
+        {% for currency in currencies %}
+        <option value="{{ currency }}">{{ currency }}</option>
+        {% endfor %}
+    </select>
+    <label>Amount</label>
+    <input value="1" id="amount" />
+    <button id="convert">Get current values</button>
+    <div id="graph"></div>
+    <canvas id="graph_canvas"></canvas>
+    <script>
+        document.getElementById('convert').addEventListener('click', function () {
+            var currency_from = document.getElementById('currency_from').value;
+            var currencies_to = [];
+            console.log(currency_to);
+            let seleccionados = document.getElementById('currency_to').selectedOptions;
+            for (let i = 0; i < seleccionados.length; i++) {
+                currencies_to.push(seleccionados[i].value);
+            }
+            var amount = document.getElementById('amount').value;
+            var url = '/v1/current-rate-conversion?source_currency=' + currency_from;
+            fetch(url)
+                .then(response => response.json())
+                .then(all_data => {
+                    const data = all_data['rates'];
+                    const xLabels = [];
+                    const keys = Object.keys(data);
+                    for (let i = 0; i < keys.length; i++) {
+                        xLabels.push(keys[i]);
+                    }
+                    const yData = [];
+                    for (let i = 0; i < keys.length; i++) {
+                        yData.push(data[keys[i]]);
+                    }
+                    var graph = document.getElementById('graph');
+                    graph.innerHTML = '';
+                    var table = document.createElement('table');
+                    var thead = document.createElement('thead');
+                    var tbody = document.createElement('tbody');
+                    var tr = document.createElement('tr');
+                    var th1 = document.createElement('th');
+                    th1.innerHTML = 'Currency';
+                    var th2 = document.createElement('th');
+                    th2.innerHTML = 'Value';
+                    tr.appendChild(th1);
+                    tr.appendChild(th2);
+                    thead.appendChild(tr);
+                    table.appendChild(thead);
+                    console.log(keys);
+                    for (var i = 0; i < keys.length; i++) {
+                        if (currencies_to.indexOf(keys[i]) == -1) {
+                            continue;
+                        }
+                        var tr = document.createElement('tr');
+                        var td1 = document.createElement('td');
+                        td1.innerHTML = keys[i];
+                        var td2 = document.createElement('td');
+                        td2.innerHTML = amount * data[keys[i]];
+                        tr.appendChild(td1);
+                        tr.appendChild(td2);
+                        tbody.appendChild(tr);
+                    }
+                    table.appendChild(tbody);
+                    graph.appendChild(table);
+                });
+        });
+    </script>
+</body>
+
+</html>

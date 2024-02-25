@@ -1,0 +1,14 @@
+[
+    {
+        "valuation_date": "2023-04-03",
+        "source_currency": "USD",
+        "exchanged_currency": "EUR",
+        "rate_value": 0.7
+    },
+    {
+        "valuation_date": "2023-04-03",
+        "source_currency": "EUR",
+        "exchanged_currency": "USD",
+        "rate_value": 1.3
+    }
+]

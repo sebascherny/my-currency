@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Conversion Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <label>Currency from</label>
+    <select id="currency_from">
+        {% for currency in currencies %}
+        <option value="{{ currency }}">{{ currency }}</option>
+        {% endfor %}
+    </select>
+    <label>Currency to</label>
+    <select id="currency_to">
+        {% for currency in currencies %}
+        <option value="{{ currency }}">{{ currency }}</option>
+        {% endfor %}
+    </select>
+    <label>Amount</label>
+    <input value="1" id="amount" />
+    <button id="convert">Get conversion history</button>
+    <div id="graph"></div>
+    <canvas id="graph_canvas"></canvas>
+    <script>
+
+        document.getElementById('convert').addEventListener('click', function () {
+            var currency_from = document.getElementById('currency_from').value;
+            var currency_to = document.getElementById('currency_to').value;
+
+            const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+            const graphSocket = new WebSocket(
+                ws_scheme + '://' + window.location.host + '/ws/graph/?base_currency=' + currency_from
+            );
+
+            graphSocket.onmessage = function (e) {
+                const data = JSON.parse(e.data).new_exchange_rate;
+                if (data.source_currency == currency_from && data.exchanged_currency == currency_to) {
+                    var complete_dict = {}
+                    for (let i = 0; i < window.chart.data.labels.length; i++) {
+                        complete_dict[window.chart.data.labels[i]] = window.chart.data.datasets[0].data[i];
+                    }
+                    new_x_label = parseInt((new Date(data.valuation_date) - new Date()) / (1000 * 60 * 60 * 24));
+                    complete_dict[new_x_label] = data.rate_value;
+                    const keys = Object.keys(complete_dict).sort((a, b) => parseInt(a) - parseInt(b));
+                    window.chart.data.labels = keys;
+                    const yValues = []
+                    for (let i = 0; i < keys.length; i++) {
+                        yValues.push(complete_dict[keys[i]]);
+                    }
+                    window.chart.data.datasets[0].data = yValues;
+                    chart.update();
+                }
+            };
+
+            graphSocket.onclose = function (e) {
+                console.error('Graph socket closed unexpectedly');
+            };
+
+            
+            var amount = document.getElementById('amount').value;
+            var url = '/v1/calculate-exchange-twrr?amount=' + amount + '&source_currency=' + currency_from + '&exchanged_currency=' + currency_to;
+            fetch(url)
+                .then(response => response.json())
+                .then(all_data => {
+                    const data = all_data['values'];
+                    const xLabels = [];
+                    const keys = Object.keys(data).sort((a, b) => parseInt(a) - parseInt(b));
+                    for (let i = 0; i < keys.length; i++) {
+                        xLabels.push(
+                            parseInt((new Date(keys[i]) - new Date()) / (1000 * 60 * 60 * 24))
+                        )
+                    }
+                    const yData = [];
+                    for (let i = 0; i < keys.length; i++) {
+                        yData.push(data[keys[i]]);
+                    }
+                    const graphData = {
+                        labels: xLabels,
+                        datasets: [{
+                            label: "Qty of " + currency_to + " for " + amount + " " + currency_from,
+                            data: yData,
+                            borderColor: 'rgb(54, 162, 235)',
+                            //backgroundColor: transparentize(CHART_COLORS.red, 0.5),
+                            yAxisID: 'y',
+                        }]
+                    };
+
+                    let scalesOptions = {
+                        x: {
+                            type: 'linear',
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                font: {
+                                    size: 15
+                                }
+                            },
+                            ticks: {
+                                callback: function (value, index, ticks) {
+                                    if (value == parseInt(value)) {
+                                        date_obj = new Date(new Date() - new Date(-1000 * 60 * 60 * 24 * value));
+                                    } else {
+                                        return '';
+                                    }
+                                    return date_obj.toISOString().split('T')[0];
+                                    // return '$' + value;
+                                }
+                            }
+                            //position: 'left'
+                        }
+                    };
+
+                    const config = {
+                        type: 'line',
+                        data: graphData,
+                        options: {
+                            animation: {
+                                duration: 500,
+                            },
+                            legend: { display: true },
+                            title: {
+                                display: true,
+                                // text: currentDatasetData[name]['title']
+                            },
+                            responsive: true,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false,
+                            },
+                            stacked: false,
+                            plugins: {
+                                title: {
+                                    display: false,
+                                    text: ''
+                                }
+                            },
+                            scales: scalesOptions
+                        },
+                    };
+                    if (window.chart != undefined) {
+                        window.chart.destroy();
+                    }
+                    window.chart = new Chart('graph_canvas', config);
+                });
+        });
+    </script>
+</body>
+
+</html>
