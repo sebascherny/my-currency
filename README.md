@@ -19,7 +19,8 @@ Create environment file:
 6. `echo "SECRET_KEY="$(openssl rand -base64 38) >> my_currency/.env`
 7. `python my_currency/manage.py makemigrations`
 8. `python my_currency/manage.py migrate`
-9. `python my_currency/manage.py runserver`
+9. `python my_currency/manage.py createsuperuser`
+10. `python my_currency/manage.py runserver`
 
 
 Test:
@@ -87,7 +88,9 @@ API Endpoints:
 ### Provider interface
 
 - Priority: The providers are sorted thsi way: If a provider is given as parameter, it's the first one that's going to be tries. After that, the "StoredDataProvider" is the one that's going to be used; it basically takes the information from the database, since a requirement mentioned that if data is in the database, it should be used, and if not, then try different providers. After these possibly two providers, the other ones that are in the database (either with urls or a hardcoded json) are sorted by the is_default boolean, and then by priority (greater to lower).
-- Pluggable: The code assumes that the url endpoints work in a similar way as Fixer. So (to avoid code injection), the way it currently works is that a Provider instance can have two endpoints (for historic data and for latest rates), and can also have a hardcoded historic json.
+
+- Pluggable: The code assumes that the url endpoints work in a similar way as Fixer. So (to avoid code injection), the way it currently works is that a Provider instance can have two endpoints (for historic data and for latest rates), and can also have a hardcoded historic json. The Django admin (at /admin/) allows the creation of new Providers.
+
 - Resiliency: As mentioned above, if a Provider does not have information, we use the next one according to is_default and priority.
 
 
@@ -111,3 +114,12 @@ A command can fill the database with information from a JSON file, like this:
 `python my_currency/manage.py import_exchange_rates my_currency/default_app/historical_rates.json`
 
 That would take the list of ExchangeRates from historical_rates.json and create model instances in the database.
+
+
+### Possible improvements
+
+- User creation and JWT authentication: This API does not contemplate Users' creation or permissions. So anybody could do a POST and add information, or a GET to obtain our information, which can definitely be bad if we had private data and also we could be exposed to attackers filling the database with garbage.
+
+- Celery worker: If we wanted to automatically update the database with information from an online Provider, for example, we could use celery for this. Currently this is not contemplated.
+
+- External storage: Currently the database is local, and although it is good enough for the scope of this project, and it's even lightweight and easy to use, in terms of scalability it does not perform well for multiple simultaneous write operations.
