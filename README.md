@@ -11,14 +11,15 @@ Service: To run it locally use the following commands:
 1. Have python and pip installed
 2. `python -m venv env`
 3. `source env/bin/activate`
-4. `pip install -r requirements.txt`
+4. `pip install -r my_currency/requirements.txt`
 5. `python my_currency/manage.py makemigrations`
 6. `python my_currency/manage.py migrate`
 7. `python my_currency/manage.py runserver`
 
 Test:
-`python my_currency/manage.py test`
-should have all tests successful.
+`source env/bin/activate`
+`python my_currency/manage.py test my_currency`
+should have all (at least 6) tests successful.
 
 API Endpoints:
     - /v1/rates-for-time-period/
