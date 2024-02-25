@@ -94,7 +94,7 @@ CHANNEL_LAYERS = {
 
 CACHE_TIME_IN_SECONDS = 60 * 60 * 24
 
-load_dotenv()
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 ENV = os.getenv("ENV")
 

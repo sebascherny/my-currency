@@ -17,6 +17,7 @@ Service: To run it locally use the following commands:
 7. `python my_currency/manage.py runserver`
 
 Test:
+Create environment file: `echo "ENV=test" > my_currency/.env`
 `source env/bin/activate`
 `python my_currency/manage.py test my_currency`
 should have all (at least 6) tests successful.

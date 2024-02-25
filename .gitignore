@@ -1,6 +1,7 @@
 
 my_currency/db.sqlite3
 env/
+my_currency/.env
 
 *pyc
 
