@@ -12,7 +12,9 @@ Service: To run it locally use the following commands:
 2. `python -m venv env`
 3. `source env/bin/activate`
 4. `pip install -r my_currency/requirements.txt`
+
 Create environment file:
+
 5. `echo "ENV=test" > my_currency/.env`
 6. `echo "SECRET_KEY="$(openssl rand -base64 38) >> my_currency/.env`
 7. `python my_currency/manage.py makemigrations`
@@ -21,32 +23,35 @@ Create environment file:
 
 
 Test:
+
 `source env/bin/activate`
+
 `python my_currency/manage.py test my_currency`
+
 should have all (at least 6) tests successful.
 One test will take some seconds because it tests the cache storage.
 
 API Endpoints:
-    - /v1/rates-for-time-period/
-        - Params: 
-            - source_currency: 3-letter code like EUR or USD
-            - date_from: Day string with format yyyy-mm-dd. Default is 1900-01-01 (to show all historic data)
-            - date_to: Same format as date_from. Default is the day of the request.
-            - provider: String with the provider name. If it exists in the database, it is the first one that will be tried.
-        - Response: Json with keys:
-            - success: True
-            - rates: Dictionary where the keys are the days in the time period, and their values are also dictionaries with currency codes as keys, rates as values.
-            - Examples: {"success": True, "rates": {"2020-01-01": {"USD": 1.1}, "2020-01-02": {"USD": 1.12}}}
-    - /v1/calculate-exchange/
-        - Params: 
-            - source_currency: 3-letter code like EUR or USD
-            - exchanged_currency: 3-letter code like EUR or USD
-            - amount: float number
-            - provider: String with the provider name. If it exists in the database, it is the first one that will be tried.
-        - Response: Json with keys:
-            - success: True
-            - value: Amount of "exchanged_currenct" that result from converting (today, or with latest rate) "amount" of "source_currenct".
-            - Examples: {"success": True, "value": 1.12}
+    * /v1/rates-for-time-period/
+        * Params: 
+            * source_currency: 3-letter code like EUR or USD
+            * date_from: Day string with format yyyy-mm-dd. Default is 1900-01-01 (to show all historic data)
+            * date_to: Same format as date_from. Default is the day of the request.
+            * provider: String with the provider name. If it exists in the database, it is the first one that will be tried.
+        * Response: Json with keys:
+            * success: True
+            * rates: Dictionary where the keys are the days in the time period, and their values are also dictionaries with currency codes as keys, rates as values.
+            * Examples: {"success": True, "rates": {"2020-01-01": {"USD": 1.1}, "2020-01-02": {"USD": 1.12}}}
+    * /v1/calculate-exchange/
+        * Params: 
+            * source_currency: 3-letter code like EUR or USD
+            * exchanged_currency: 3-letter code like EUR or USD
+            * amount: float number
+            * provider: String with the provider name. If it exists in the database, it is the first one that will be tried.
+        * Response: Json with keys:
+            * success: True
+            * value: Amount of "exchanged_currenct" that result from converting (today, or with latest rate) "amount" of "source_currenct".
+            * Examples: {"success": True, "value": 1.12}
     - /v1/calculate-exchange-twrr/
         - Params: 
             - source_currency: 3-letter code like EUR or USD
