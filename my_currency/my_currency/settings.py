@@ -22,14 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-2c-l&u!25_7klz=5_@%(3cvatv+-k307if+*+&ze_k+f(_9)5j"
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -42,7 +35,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'rest_framework',
-    #'rest_framework.authtoken',
     'default_app.apps.DefaultAppConfig',
     'channels',
 ]
@@ -97,9 +89,12 @@ CACHE_TIME_IN_SECONDS = 60 * 60 * 24
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 ENV = os.getenv("ENV")
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-2c-l&u!25_7klz=5_@%(3cvatv+-k307if+*+&ze_k+f(_9)5j")
+DEBUG = False
 
 if ENV == 'test':
     CACHE_TIME_IN_SECONDS = 5
+    DEBUG = True
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

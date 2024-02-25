@@ -24,7 +24,7 @@ from default_app.views import CurrencyViewSet, CurrencyExchangeRateViewSet, \
 
 router = DefaultRouter()
 router.register(r'currencies', CurrencyViewSet)
-router.register(r'exchange_rates', CurrencyExchangeRateViewSet)
+router.register(r'currency_exchange_rates', CurrencyExchangeRateViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

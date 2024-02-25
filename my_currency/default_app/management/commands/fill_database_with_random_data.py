@@ -33,6 +33,6 @@ class Command(BaseCommand):
                     source_currency=Currency.objects.get(code=base_currency_code),
                     exchanged_currency=Currency.objects.get(code=currency),
                     valuation_date=datetime.now().date() - timedelta(days=i),
-                    defaults={'rate_value': initial_rate + random.random() / 10}
+                    defaults={'rate_value': initial_rate + random.uniform(-0.01, 0.01)}
                 )
         self.stdout.write(self.style.SUCCESS('Successfully created exchange rates for %s days from %s to %s' % (number_of_days, base_currency_code, all_currencies, )))

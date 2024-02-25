@@ -12,15 +12,19 @@ Service: To run it locally use the following commands:
 2. `python -m venv env`
 3. `source env/bin/activate`
 4. `pip install -r my_currency/requirements.txt`
-5. `python my_currency/manage.py makemigrations`
-6. `python my_currency/manage.py migrate`
-7. `python my_currency/manage.py runserver`
+Create environment file:
+5. `echo "ENV=test" > my_currency/.env`
+6. `echo "SECRET_KEY="$(openssl rand -base64 38) >> my_currency/.env`
+7. `python my_currency/manage.py makemigrations`
+8. `python my_currency/manage.py migrate`
+9. `python my_currency/manage.py runserver`
+
 
 Test:
-Create environment file: `echo "ENV=test" > my_currency/.env`
 `source env/bin/activate`
 `python my_currency/manage.py test my_currency`
 should have all (at least 6) tests successful.
+One test will take some seconds because it tests the cache storage.
 
 API Endpoints:
     - /v1/rates-for-time-period/
