@@ -38,11 +38,30 @@ class ProviderInterface:
         raise NotImplementedError("Subclasses must implement this method")
 
     def _is_sanity_json(self, js):
-        return isinstance(js, dict) and js.get('success') == True and isinstance(js.get('rates'), dict)
+        return bool(
+            isinstance(js, dict) and js.get('success') == True and
+            isinstance(js.get('rates'), dict)
+        )
 
     def _get_rates_dict_from_json(self, js):
         assert self._is_sanity_json(js)
         return js['rates']
+
+    def _get_latest_rates_from_timeseries(self, rates):
+        assert self._is_timeseries_sanity(rates)
+        latest_date = list(sorted(rates.keys()))[-1]
+        return rates[latest_date]
+
+    def _is_timeseries_sanity(self, rates):
+        return bool(
+            rates and isinstance(rates, dict) and
+            all(isinstance(k, str) and len(k) == 10 for k in rates.keys()) and
+            all(isinstance(v, dict) for v in rates.values())
+        )
+
+    def _filter_timeseries(self, rates, date_from, date_to):
+        assert self._is_timeseries_sanity(rates)
+        return {k: v for k, v in rates.items() if date_from <= k <= date_to}
 
 
 class Provider(models.Model, ProviderInterface):

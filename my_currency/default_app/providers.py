@@ -1,58 +1,31 @@
-from .models import Provider, ProviderInterface, Currency, CurrencyExchangeRate
+from .models import ProviderInterface, Currency
+import json
+import os
 
 
 class MockProvider(ProviderInterface):
 
     name = 'Mock Provider'
+    path_from_this_folder = 'json_files/mock_provider_data.json'
 
     def get_latest_rates_dict(self, base_currency_code):
-        js = {
-            "success": True,
-            "timestamp": 1519296206,
-            "base": base_currency_code,
-            "date": "2024-02-25",
-            "rates": {
-                "AUD": 3.33,
-                "CAD": 3.33,
-                "CHF": 3.33,
-                "CNY": 3.33,
-                "GBP": 3.33,
-                "JPY": 3.33,
-                "USD": 3.33,
-            }
-        }
+        with open(os.path.join(os.path.dirname(__file__), self.path_from_this_folder)) as f:
+            js = json.load(f)
+        js["base"] = base_currency_code
         assert self._is_sanity_json(js)
-        return js['rates']
+        rates = js['rates']
+        rates = self._get_latest_rates_from_timeseries(rates)
+        return rates
 
     def get_rates_dict_timeseries(self, base_currency_code, date_from, date_to):
-        js = {
-            "success": True,
-            "timestamp": 1519296206,
-            "base": base_currency_code,
-            "date": "2024-02-25",
-            "rates": {
-                '2020-01-01': {
-                    "AUD": 1.11,
-                    "CAD": 1.11,
-                    "CHF": 1.11,
-                    "CNY": 1.11,
-                    "GBP": 1.11,
-                    "JPY": 1.11,
-                    "USD": 1.11,
-                },
-                '2020-01-02': {
-                    "AUD": 2.22,
-                    "CAD": 2.22,
-                    "CHF": 2.22,
-                    "CNY": 2.22,
-                    "GBP": 2.22,
-                    "JPY": 2.22,
-                    "USD": 2.22,
-                }
-            }
-        }
+        with open(os.path.join(os.path.dirname(__file__), self.path_from_this_folder)) as f:
+            js = json.load(f)
+        js["base"] = base_currency_code
         assert self._is_sanity_json(js)
-        return js['rates']
+        rates = js['rates']
+        assert self._is_timeseries_sanity(rates)
+        rates = self._filter_timeseries(rates, date_from, date_to)
+        return rates
 
 
 class StoredDataProvider(ProviderInterface):

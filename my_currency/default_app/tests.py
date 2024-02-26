@@ -36,7 +36,7 @@ class APIV1Test(APITestCase):
             data={"source_currency": "EUR", "amount": 2, "exchanged_currency": "USD"},
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {'success': True, 'value': 6.66})
+        self.assertEqual(response.json(), {'success': True, 'value': 4.44})
 
     def test_stored_data_provider(self):
         usd = Currency.objects.create(code="USD", name="US Dollar", symbol="$")
