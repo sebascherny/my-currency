@@ -123,3 +123,5 @@ That would take the list of ExchangeRates from historical_rates.json and create 
 - Celery worker: If we wanted to automatically update the database with information from an online Provider, for example, we could use celery for this. Currently this is not contemplated.
 
 - External storage: Currently the database is local, and although it is good enough for the scope of this project, and it's even lightweight and easy to use, in terms of scalability it does not perform well for multiple simultaneous write operations.
+
+- CI/CD: The github repo could have a configuration where the project is built after every commit, and the Django tests are ran. Or a Docker file could be created to facilitate the running command as well as testing.
