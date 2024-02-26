@@ -133,7 +133,7 @@ def currency_converter(request):
     provider_name = data.get('provider')
     rates = get_rates_dict_from_some_provider(provider_name, source_currency, exchanged_currency=exchanged_currency)
     if rates and exchanged_currency in rates:
-        return JsonResponse({'success': True, 'value': amount * rates[exchanged_currency]})
+        return JsonResponse({'success': True, 'value': amount * rates[exchanged_currency], 'rate': rates[exchanged_currency]})
     return HttpResponseBadRequest('Could not convert the currency')
 
 

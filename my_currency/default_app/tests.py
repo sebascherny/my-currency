@@ -36,7 +36,7 @@ class APIV1Test(APITestCase):
             data={"source_currency": "EUR", "amount": 2, "exchanged_currency": "USD"},
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {'success': True, 'value': 4.44})
+        self.assertEqual(response.json(), {'success': True, 'value': 4.44, 'rate': 2.22})
 
     def test_stored_data_provider(self):
         usd = Currency.objects.create(code="USD", name="US Dollar", symbol="$")
@@ -64,7 +64,7 @@ class APIV1Test(APITestCase):
             data={"source_currency": "EUR", "amount": 2, "exchanged_currency": "USD"},
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {'success': True, 'value': 2 * 1.13})
+        self.assertEqual(response.json(), {'success': True, 'value': 2 * 1.13, 'rate': 1.13})
         response = self.client.get(
             '/v1/rates-for-time-period/',
             data={"source_currency": "EUR", "amount": 2, "exchanged_currency": "USD", "date_from": "2020-01-01", "date_to": "2020-01-02"},
@@ -138,13 +138,13 @@ class APIV1Test(APITestCase):
             data={"source_currency": "EUR", "amount": 2, "exchanged_currency": "USD"},
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {'success': True, 'value': 2 * 1.13})
+        self.assertEqual(response.json(), {'success': True, 'value': 2 * 1.13, 'rate': 1.13})
         response = self.client.get(
             '/v1/calculate-exchange/',
             data={"source_currency": "EUR", "amount": 2, "exchanged_currency": "GBP", "provider": "Provider 3"},
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {'success': True, 'value': 2 * 10})
+        self.assertEqual(response.json(), {'success': True, 'value': 2 * 10, 'rate': 10})
         response = self.client.get(
             '/v1/calculate-exchange/',
             data={"source_currency": "EUR", "amount": 2, "exchanged_currency": "FGH", "provider": "Provider 3"},
@@ -157,7 +157,7 @@ class APIV1Test(APITestCase):
             data={"source_currency": "EUR", "amount": 2, "exchanged_currency": "ABC", "provider": "Provider 3"},
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {'success': True, 'value': 2 * 0.05})
+        self.assertEqual(response.json(), {'success': True, 'value': 2 * 0.05, 'rate': 0.05})
 
     def test_time_weighted_exchange(self):
         usd = Currency.objects.create(code="USD", name="US Dollar", symbol="$")
@@ -320,7 +320,7 @@ class APIV1Test(APITestCase):
         )
         self.assertEqual(mock_requests_get.call_count, 3)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {'value': 2 * usd_rate_latest, 'success': True})
+        self.assertEqual(response.json(), {'success': True, 'value': 2 * usd_rate_latest, 'rate': usd_rate_latest})
 
         response = self.client.get(
             '/v1/rates-for-time-period/',
