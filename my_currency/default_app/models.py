@@ -4,10 +4,9 @@ from django.core.cache import cache
 from my_currency.settings import CACHE_TIME_IN_SECONDS
 
 
-# Create your models here.
 class Currency(models.Model):
     code = models.CharField(max_length=3, unique=True)
-    name = models.CharField(max_length=20, db_index=True)
+    name = models.CharField(max_length=20)
     symbol = models.CharField(max_length=10)
 
     def __str__(self):
@@ -18,14 +17,14 @@ class CurrencyExchangeRate(models.Model):
     source_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name='exchanges')
     exchanged_currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
     valuation_date = models.DateField(db_index=True)
-    rate_value = models.DecimalField(db_index=True, decimal_places=6, max_digits=18)
+    rate_value = models.DecimalField(decimal_places=6, max_digits=18)
 
     class Meta:
         unique_together = ('source_currency', 'exchanged_currency', 'valuation_date')
         ordering = ('valuation_date', 'source_currency', 'exchanged_currency')
 
     def __str__(self):
-        return f"{self.source_currency} to {self.exchanged_currency} on {self.valuation_date.strftime('%Y-%m-%d')}: {self.rate_value}"
+        return f"At {self.valuation_date.strftime('%Y-%m-%d')}, 1 {self.source_currency.code} = {self.rate_value} {self.exchanged_currency.code}"
 
 
 class ProviderInterface:

@@ -74,6 +74,12 @@ class APIV1Test(APITestCase):
             "2020-01-01": {'USD': 1.110000},
             "2020-01-02": {'USD': 1.120000},
         }})
+        eur = Currency.objects.get(code="EUR")
+        self.assertEqual([str(x) for x in eur.exchanges.all()], [
+            'At 2020-01-01, 1 EUR = 1.110000 USD',
+            'At 2020-01-02, 1 EUR = 1.120000 USD',
+            'At 2020-01-03, 1 EUR = 1.130000 USD'
+        ])
 
     def test_different_providers(self):
         usd = Currency.objects.create(code="USD", name="US Dollar", symbol="$")

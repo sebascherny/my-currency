@@ -65,8 +65,7 @@ class StoredDataProvider(ProviderInterface):
         if not base_currency_object:
             return rates
         for currency in Currency.objects.all():
-            latest_rate = CurrencyExchangeRate.objects.filter(
-                source_currency=base_currency_object,
+            latest_rate = base_currency_object.exchanges.filter(
                 exchanged_currency=currency
             ).last()
             if latest_rate:
@@ -81,8 +80,7 @@ class StoredDataProvider(ProviderInterface):
         base_currency_object = Currency.objects.all().filter(code=base_currency_code).first()
         if not base_currency_object:
             return rates
-        for rate in CurrencyExchangeRate.objects.filter(
-            source_currency=base_currency_object,
+        for rate in base_currency_object.exchanges.filter(
             valuation_date__gte=date_from,
             valuation_date__lte=date_to
         ):
