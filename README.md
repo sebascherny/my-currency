@@ -52,7 +52,8 @@ API Endpoints:
     - Response: Json with keys:
         - success: True
         - value: Amount of "exchanged_currenct" that result from converting (today, or with latest rate) "amount" of "source_currenct".
-        - Examples: {"success": True, "value": 1.12}
+        - rate: latest rate
+        - Examples: {"success": True, "value": 1.12, "rate": 1.12}
 - /v1/calculate-exchange-twrr/
     - Params: 
         - source_currency: 3-letter code like EUR or USD

@@ -12,6 +12,9 @@ class Currency(models.Model):
     def __str__(self):
         return self.code
 
+    class Meta:
+        ordering = ('code',)
+
 
 class CurrencyExchangeRate(models.Model):
     source_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name='exchanges')

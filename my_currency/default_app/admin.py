@@ -3,10 +3,10 @@ from .models import CurrencyExchangeRate, Currency, Provider
 
 
 class CurrencyExchangeRateModelAdmin(admin.ModelAdmin):
-    pass
+    autocomplete_fields = ('source_currency', 'exchanged_currency')
 
 class CurrencyModelAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['code']
 
 class ProviderModelAdmin(admin.ModelAdmin):
     pass
