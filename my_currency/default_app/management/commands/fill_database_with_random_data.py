@@ -3,6 +3,8 @@ from django.core.management.base import BaseCommand
 from default_app.models import Currency, CurrencyExchangeRate
 from datetime import datetime, timedelta
 import random
+from django.db import transaction
+
 
 class Command(BaseCommand):
     help = 'Cleans database and creates random exchange rates in database for testing purposes'
@@ -23,16 +25,25 @@ class Command(BaseCommand):
         number_of_days = options['number_of_days']
         for currency in all_currencies + ([base_currency_code] if base_currency_code not in all_currencies else []):
             Currency.objects.update_or_create(code=currency, name=currency, symbol=currency)
+        base_currency = Currency.objects.get(code=base_currency_code)
+        today = datetime.now().date()
+        all_rates = []
         for currency in all_currencies:
             initial_rate = 0.5 + random.random()
             if currency == base_currency_code:
                 # initial_rate = 1.0
                 continue
-            for i in range(number_of_days):
-                CurrencyExchangeRate.objects.update_or_create(
-                    source_currency=Currency.objects.get(code=base_currency_code),
-                    exchanged_currency=Currency.objects.get(code=currency),
-                    valuation_date=datetime.now().date() - timedelta(days=i),
-                    defaults={'rate_value': initial_rate + random.uniform(-0.01, 0.01)}
+            exchanged_currency = Currency.objects.get(code=currency)
+            all_rates.extend([
+                CurrencyExchangeRate(
+                    source_currency=base_currency,
+                    exchanged_currency=exchanged_currency,
+                    valuation_date=today - timedelta(days=i),
+                    rate_value=initial_rate + random.uniform(-0.01, 0.01)
                 )
+                for i in range(number_of_days)
+            ])
+        with transaction.atomic():
+            CurrencyExchangeRate.objects.bulk_create(all_rates, ignore_conflicts=True)
+                
         self.stdout.write(self.style.SUCCESS('Successfully created exchange rates for %s days from %s to %s' % (number_of_days, base_currency_code, all_currencies, )))

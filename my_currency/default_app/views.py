@@ -1,5 +1,5 @@
 from rest_framework import viewsets, mixins
-from .models import Currency, CurrencyExchangeRate, Provider
+from .models import Currency, CurrencyExchangeRate, Provider, SiteConfiguration
 from .serializers import CurrencySerializer, CurrencyExchangeRateSerializer
 from django.http import JsonResponse, HttpResponseBadRequest
 from .providers import MockProvider, StoredDataProvider
@@ -111,7 +111,7 @@ def get_list_of_rates_for_time_period(request):
     date_from = data.get('date_from')
     date_to = data.get('date_to')
     if not date_from:
-        date_from = '1900-01-01'
+        date_from = SiteConfiguration.objects.get().start_date.strftime("%Y-%m-%d")
     if not date_to:
         date_to = datetime.datetime.now().strftime("%Y-%m-%d")
     provider_name = data.get('provider')

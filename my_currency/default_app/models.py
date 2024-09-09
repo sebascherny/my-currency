@@ -2,6 +2,8 @@ from django.db import models
 import requests
 from django.core.cache import cache
 from my_currency.settings import CACHE_TIME_IN_SECONDS
+from django.utils.timezone import make_aware
+from datetime import datetime
 
 
 class Currency(models.Model):
@@ -114,3 +116,24 @@ class Provider(models.Model, ProviderInterface):
                 return self._get_rates_dict_from_json(js)
         return {}
         # raise ValueError(f"Failed to get rates from {self.latest_endpoint} for {base_currency_code}")
+
+
+class SiteConfiguration(models.Model):
+    # Define the min_date field with a default value of 1900-01-01
+    min_date = models.DateField(default=make_aware(datetime(1900, 1, 1)))
+
+    class Meta:
+        verbose_name = 'Site Configuration'
+        verbose_name_plural = 'Site Configuration'
+
+    def save(self, *args, **kwargs):
+        # Ensure that only one instance can be created
+        if not self.pk and SiteConfiguration.objects.exists():
+            raise Exception('Only one SiteConfiguration instance can be created.')
+        return super(SiteConfiguration, self).save(*args, **kwargs)
+
+    @classmethod
+    def get_instance(cls):
+        # Use get or create to ensure there's only one instance
+        instance, created = cls.objects.get_or_create()
+        return instance

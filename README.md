@@ -112,7 +112,7 @@ A celery worker could be used to scrape data daily from a provider's url, for ex
 
 A command can fill the database with information from a JSON file, like this:
 
-`python my_currency/manage.py import_exchange_rates my_currency/default_app/historical_rates.json`
+`python my_currency/manage.py import_exchange_rates my_currency/default_app/json_files/list_of_exchange_rates.json`
 
 That would take the list of ExchangeRates from historical_rates.json and create model instances in the database.
 
